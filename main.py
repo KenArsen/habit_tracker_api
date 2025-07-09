@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 from src.api import main_router
 
-app = FastAPI()
+app = FastAPI(summary="Habit tracker API")
 
 app.include_router(main_router)
 
