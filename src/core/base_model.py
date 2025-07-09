@@ -12,4 +12,4 @@ class BaseModelMixin:
 
     @declared_attr
     def updated_at(cls):
-        return Column(DateTime(timezone=True), default=func.now, onupdate=func.now())
+        return Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())

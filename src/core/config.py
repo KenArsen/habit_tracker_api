@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +12,10 @@ class Settings(BaseSettings):
     DB_NAME: str
     DB_USER: str
     DB_PASS: str
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str
+    JWT_TOKEN_LOCATION: List[str]
+    JWT_ACCESS_COOKIE_NAME: str
 
     @property
     def DATABASE_URL(self) -> str:
