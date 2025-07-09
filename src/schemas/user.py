@@ -1,10 +1,10 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserBaseSchema(BaseModel):
     email: EmailStr
-    first_name: str
-    last_name: str
+    first_name: str = Field(min_length=1, max_length=50)
+    last_name: str = Field(min_length=1, max_length=50)
 
 
 class UserSchema(UserBaseSchema):
@@ -12,7 +12,7 @@ class UserSchema(UserBaseSchema):
 
 
 class RegisterSchema(UserBaseSchema):
-    password: str
+    password: str = Field(min_length=8, max_length=50)
 
     class Config:
         json_schema_extra = {
@@ -27,7 +27,7 @@ class RegisterSchema(UserBaseSchema):
 
 class LoginSchema(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(min_length=8, max_length=50)
 
     class Config:
         json_schema_extra = {
