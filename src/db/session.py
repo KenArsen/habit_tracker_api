@@ -12,6 +12,11 @@ async_session = async_sessionmaker(bind=engine, expire_on_commit=False)
 class Base(DeclarativeBase):
     __abstract__ = True
 
+    @classmethod
+    @declared_attr.directive
+    def __tablename__(cls) -> str:
+        return f"{cls.__name__.lower()}s"
+
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     @declared_attr
