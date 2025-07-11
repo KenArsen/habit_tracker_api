@@ -5,7 +5,7 @@ from src.auth.security import auth, hash_password, verify_password
 from src.core.config import settings
 from src.db.deps import CurrentUserDep, SessionDep
 from src.models.user import User
-from src.schemas.user import LoginSchema, RegisterSchema, UserSchema
+from src.schemas.user import ChangePasswordSchema, LoginSchema, RegisterSchema, UserSchema
 
 router = APIRouter()
 
@@ -46,3 +46,17 @@ async def login(data: LoginSchema, session: SessionDep, response: Response):
 @router.get("/me", response_model=UserSchema)
 async def get_me(current_user: CurrentUserDep):
     return current_user
+
+
+@router.post("/change-password", status_code=status.HTTP_200_OK)
+async def change_password(current_user: CurrentUserDep, data: ChangePasswordSchema, session: SessionDep):
+    result = await session.execute(select(User).where(User.id == current_user.id))
+    user: User = result.scalar_one_or_none()
+
+    if not verify_password(data.old_password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid current password")
+
+    user.password = hash_password(data.new_password)
+
+    await session.commit()
+    return {"detail": "Password updated successfully"}

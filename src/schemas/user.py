@@ -50,3 +50,16 @@ class MeSchema(UserBaseSchema):
                 "last_name": "Kenzhegulov",
             }
         }
+
+
+class ChangePasswordSchema(BaseModel):
+    old_password: str = Field(min_length=8, max_length=50)
+    new_password: str = Field(min_length=8, max_length=50)
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "old_password": "arsen2002",
+                "new_password": "2002arsen",
+            }
+        }
