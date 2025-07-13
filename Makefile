@@ -1,55 +1,55 @@
-# Главный Makefile
+# Главный Makefile для habit_tracker_api
 
-# Название проекта (используется только для вывода)
 PROJECT_NAME = habit_tracker_api
 
-# Запуск в режиме разработки
+# Цвета
+RED = \033[0;31m
+GREEN = \033[0;32m
+YELLOW = \033[0;33m
+NC = \033[0m
+
+# Подключение docker/Makefile
+include docker/Makefile
+
+.PHONY: help dev migration migrate-local clean init
+
+# Запуск FastAPI в dev-режиме
 dev:
+	@echo "$(GREEN)🚀 Запуск сервера разработки...$(NC)"
 	uvicorn app.main:app --host localhost --port 8000 --reload
 
-# Запуск в продакшен режиме
-run:
-	uvicorn app.main:app --host 0.0.0.0 --port 8000
-
-# Очистка кеша
-clean:
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-
-# Создание миграций
+# Создание новой миграции
 migration:
+ifndef message
+	$(error ❌ Укажите сообщение: make migration message="Initial commit")
+endif
 	alembic revision --autogenerate -m "$(message)"
 
-# Применение миграций
-migrate:
+# Применение миграций локально
+migrate-local:
 	alembic upgrade head
 
-.PHONY: help
+# Очистка pycache и docker-мусора
+clean:
+	@echo "$(RED)🧹 Очистка кеша и Docker...$(NC)"
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type f -name "*.pyc" -delete
+	$(MAKE) docker-clean
+
+# Быстрая инициализация проекта
+init: docker-build docker-up docker-migrate docker-create-superuser
+	@echo "$(GREEN)✅ Проект $(PROJECT_NAME) инициализирован$(NC)"
+
+# Справка
 help:
-	@echo "Makefile для проекта: $(PROJECT_NAME)"
+	@echo "$(GREEN)Makefile для проекта: $(PROJECT_NAME)$(NC)"
 	@echo ""
-	@echo "🛠️  Docker:"
-	@echo "  make build               - Сборка Docker-образов"
-	@echo "  make up                  - Запуск контейнеров в фоне"
-	@echo "  make start               - Запуск контейнеров в обычном режиме (с логами)"
-	@echo "  make stop                - Остановка контейнеров"
-	@echo "  make down                - Остановка и удаление контейнеров"
-	@echo "  make restart             - Перезапуск контейнеров"
-	@echo "  make logs                - Просмотр логов контейнеров"
-	@echo "  make clean               - Полная очистка: контейнеры, образы, тома"
-	@echo "  make shell               - Доступ к bash в контейнере web"
+	@echo "$(YELLOW)Основные команды (локальные):$(NC)"
+	@echo "  $(GREEN)make dev$(NC)            - Запуск FastAPI в dev-режиме"
+	@echo "  $(GREEN)make migration$(NC)      - Создать миграцию (требует message=\"...\")"
+	@echo "  $(GREEN)make migrate-local$(NC)  - Применить миграции локально"
+	@echo "  $(GREEN)make clean$(NC)          - Очистка кэша и Docker-контейнеров"
+	@echo "  $(GREEN)make init$(NC)           - Быстрая инициализация проекта"
 	@echo ""
-	@echo "🐍 FastAPI:"
-	@echo "  make dev                 - Запустить проект"
-	@echo ""
-	@echo "🚀 Быстрая инициализация проекта:"
-	@echo "  make init                - Билд, запуск, создание суперпользователя и загрузка данных"
-	@echo ""
-	@echo "🌐 Nginx:"
-	@echo "  make deploy-nginx        - Задеплоить конфигурацию Nginx"
-	@echo "  make remove-nginx        - Удалить конфигурацию Nginx"
-	@echo "  make check-nginx-config  - Проверить синтаксис конфигурации"
-	@echo "  make clear-logs          - Очистить логи Nginx"
-	@echo ""
-	@echo "🔧 Утилиты:"
-	@echo "  make help                - Показать эту справку"
+	@echo "$(YELLOW)Docker команды:$(NC)"
+	@$(MAKE) docker-help
