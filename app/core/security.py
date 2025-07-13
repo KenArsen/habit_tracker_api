@@ -1,7 +1,7 @@
 from authx import AuthX, AuthXConfig
 from passlib.context import CryptContext
 
-from src.core.config import settings
+from app.core.config import settings
 
 config = AuthXConfig(
     JWT_ALGORITHM=settings.JWT_ALGORITHM,

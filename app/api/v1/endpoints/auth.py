@@ -1,16 +1,16 @@
 from fastapi import APIRouter, HTTPException, Response, status
 from sqlalchemy import select
 
-from src.auth.security import auth, hash_password, verify_password
-from src.core.config import settings
-from src.db.deps import CurrentUserDep, SessionDep
-from src.models.user import User
-from src.schemas.user import ChangePasswordSchema, LoginSchema, RegisterSchema, UserSchema
+from app.api.deps import CurrentUserDep, SessionDep
+from app.core.config import settings
+from app.core.security import auth, hash_password, verify_password
+from app.models import User
+from app.schemas.auth import ChangePasswordSchema, LoginSchema, MeSchema, RegisterSchema
 
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(data: RegisterSchema, session: SessionDep):
     result = await session.execute(select(User).filter(User.email == data.email))
     existing_user = result.scalar_one_or_none()
@@ -43,7 +43,7 @@ async def login(data: LoginSchema, session: SessionDep, response: Response):
     return {"access_token": access_token}
 
 
-@router.get("/me", response_model=UserSchema)
+@router.get("/me", response_model=MeSchema)
 async def get_me(current_user: CurrentUserDep):
     return current_user
 

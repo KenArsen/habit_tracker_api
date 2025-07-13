@@ -5,15 +5,9 @@ from jose import JWTError, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.config import settings
-from src.db.session import async_session
-from src.models.user import User
-
-
-async def get_session():
-    async with async_session() as session:
-        yield session
-
+from app.core.config import settings
+from app.core.database import get_session
+from app.models import User
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
