@@ -40,3 +40,18 @@ class HabitReadSchema(HabitBaseSchema):
                 "updated_at": "2025-07-09T12:00:00",
             }
         }
+
+
+class HabitUpdateSchema(HabitBaseSchema):
+    title: str
+    description: Optional[str] = None
+    is_active: Optional[bool] = True
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "title": "Drink water",
+                "description": "Drink at least 2 liters of water",
+                "is_active": True,
+            }
+        }
