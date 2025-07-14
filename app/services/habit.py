@@ -1,5 +1,3 @@
-# app/services/habit.py
-
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
