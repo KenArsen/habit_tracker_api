@@ -8,9 +8,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from src.core.config import settings  # 👈 подключаем pydantic settings
-from src.db.session import Base  # 👈 и Base
-from src.models import user  # noqa
+from app.core.config import settings  # 👈 подключаем pydantic settings
+from app.models import habit, user  # noqa
+from app.models.base import Base  # 👈 и Base
 
 # Добавляем путь до src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
