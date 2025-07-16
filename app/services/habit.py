@@ -1,6 +1,6 @@
-from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import NotFoundException
 from app.crud import habit as habit_crud
 from app.models.habit import Habit
 from app.schemas.habit import HabitCreateSchema, HabitUpdateSchema
@@ -13,7 +13,7 @@ class HabitService:
     async def get_by_id_or_404(self, habit_id: int, user_id: int) -> Habit:
         habit = await habit_crud.get_by_id(self.db, habit_id, user_id)
         if not habit:
-            raise HTTPException(status_code=404, detail="Habit not found")
+            raise NotFoundException("Habit")
         return habit
 
     async def list(self, user_id: int) -> list[Habit]:

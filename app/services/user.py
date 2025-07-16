@@ -1,6 +1,6 @@
-from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.exceptions import NotFoundException, UserAlreadyExistsException
 from app.core.security import hash_password
 from app.crud import user as user_crud
 from app.models import User
@@ -15,13 +15,13 @@ class UserService:
     async def get_by_id_or_404(self, user_id: int) -> User:
         user = await user_crud.get_by_id(self.db, user_id)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise NotFoundException("User")
         return user
 
     async def create(self, data: RegisterSchema) -> User:
         existing_user = await user_crud.get_by_email(self.db, data.email)
         if existing_user:
-            raise HTTPException(status_code=400, detail="Email already registered")
+            raise UserAlreadyExistsException()
 
         user = User(
             email=data.email,
