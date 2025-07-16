@@ -18,8 +18,6 @@ async def register(data: RegisterSchema, session: SessionDep):
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    print(data)
-
     user = User(
         email=data.email,
         first_name=data.first_name,
