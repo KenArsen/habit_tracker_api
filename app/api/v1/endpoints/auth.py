@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Response, status
 from sqlalchemy import select
 
-from app.api.deps import CurrentUserDep, SessionDep
+from app.api.deps import CurrentUserDep
 from app.core.config import settings
+from app.core.deps import SessionDep
 from app.core.security import auth, hash_password, verify_password
 from app.models import User
 from app.schemas.auth import ChangePasswordSchema, LoginSchema, MeSchema, RegisterSchema

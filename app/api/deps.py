@@ -3,13 +3,10 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Request
 from jose import JWTError, jwt
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.database import get_session
+from app.core.deps import SessionDep
 from app.models import User
-
-SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 
 async def get_current_user(request: Request, session: SessionDep) -> User:
