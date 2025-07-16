@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Response, status
 
 from app.api.deps import CurrentUserDep
+from app.core.config import settings
 from app.core.deps import SessionDep
 from app.schemas.auth import ChangePasswordSchema, LoginSchema, MeSchema, RegisterSchema
 from app.services.auth import AuthService
@@ -18,6 +19,12 @@ async def register(data: RegisterSchema, session: SessionDep):
 async def login(data: LoginSchema, session: SessionDep, response: Response):
     service = AuthService(db=session)
     return await service.login(data=data, response=response)
+
+
+@router.post("/logout", status_code=status.HTTP_200_OK)
+async def logout(response: Response):
+    response.delete_cookie(settings.JWT_ACCESS_COOKIE_NAME)
+    return {"detail": "Logged out successfully"}
 
 
 @router.get("/me", response_model=MeSchema)
