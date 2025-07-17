@@ -1,12 +1,12 @@
 import uvicorn
 from fastapi import FastAPI
 
-from app.admin.admin import setup_admin
 from app.api.v1.api import main_router
+from app.core.initializer import AppInitializer
 
 app = FastAPI(summary="Habit tracker API")
 
-setup_admin(app)
+AppInitializer(app).setup()
 app.include_router(main_router)
 
 

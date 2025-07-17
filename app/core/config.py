@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str
     JWT_TOKEN_LOCATION: List[str]
     JWT_ACCESS_COOKIE_NAME: str
+    CORS_ORIGINS: List[str]
 
     @property
     def DATABASE_URL(self) -> str:
