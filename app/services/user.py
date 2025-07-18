@@ -23,12 +23,8 @@ class UserService:
         if existing_user:
             raise UserAlreadyExistsException()
 
-        user = User(
-            email=data.email,
-            first_name=data.first_name,
-            last_name=data.last_name,
-            password=hash_password(data.password),
-        )
+        user = User(**data.model_dump())
+        user.password = hash_password(data.password)
         return await user_crud.create(self.db, user)
 
     async def update(self, user_id: int, data: UserUpdateSchema) -> User:
