@@ -45,5 +45,6 @@ COPY --from=builder /habit_tracker_api /habit_tracker_api
 # Открываем порт для Django
 EXPOSE 8000
 
-# Указываем команду по умолчанию (будет переопределена в docker-compose)
-CMD ["sh", "-c", " uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+RUN chmod +x prestart.sh
+
+ENTRYPOINT ["./prestart.sh"]
