@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 # Устанавливаем рабочую директорию
-WORKDIR /app
+WORKDIR /habit_tracker_api
 
 # Устанавливаем Poetry
 RUN pip install poetry
@@ -19,7 +19,7 @@ RUN poetry config virtualenvs.create false \
     && poetry install --without dev --no-interaction --no-ansi --no-root
 
 # Копируем весь проект
-COPY . /app
+COPY . /habit_tracker_api
 
 # Этап 2: Runtime-образ
 FROM python:3.12-slim
@@ -29,7 +29,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 # Устанавливаем рабочую директорию
-WORKDIR /app
+WORKDIR /habit_tracker_api
 
 # Устанавливаем минимальные системные зависимости (для Celery, PostgreSQL и т.д.)
 RUN apt-get update && apt-get install -y \
@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install -y \
 # Копируем зависимости и проект из builder
 COPY --from=builder /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
-COPY --from=builder /app /app
+COPY --from=builder /habit_tracker_api /habit_tracker_api
 
 # Открываем порт для Django
 EXPOSE 8000

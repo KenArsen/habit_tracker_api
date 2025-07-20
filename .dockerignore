@@ -1,3 +1,6 @@
+.pre-commit-config.yaml
+README.md
+
 # Git
 .git
 .gitignore
@@ -35,7 +38,7 @@ ENV/
 env.bak/
 venv.bak/
 .venv/
-.env
+.env_example
 
 # IDE
 .vscode/
