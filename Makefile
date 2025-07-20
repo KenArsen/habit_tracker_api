@@ -1,6 +1,6 @@
-# Главный Makefile для habit_tracker_api
-
-PROJECT_NAME = habit_tracker_api
+COMPOSE_FILE = docker/docker-compose.yaml
+APP_SERVICE = web
+DB_SERVICE = db
 
 # Цвета
 RED = \033[0;31m
@@ -8,48 +8,51 @@ GREEN = \033[0;32m
 YELLOW = \033[0;33m
 NC = \033[0m
 
-# Подключение docker/Makefile
-include docker/Makefile
+.PHONY: help
 
-.PHONY: help dev migration migrate-local clean init
+# Справка по Docker-командам
+help:
+	@echo "$(GREEN)📦 Docker команды для $(PROJECT_NAME):$(NC)"
+	@echo "  $(GREEN)make build$(NC)            - Сборка Docker-образов"
+	@echo "  $(GREEN)make up$(NC)               - Запуск контейнеров"
+	@echo "  $(GREEN)make down$(NC)             - Остановка контейнеров"
+	@echo "  $(GREEN)make migrate$(NC)          - Применение миграций внутри контейнера"
+	@echo "  $(GREEN)make shell$(NC)            - Bash внутри контейнера"
+	@echo "  $(GREEN)make clean$(NC)            - Полная очистка Docker и кэша"
 
-# Запуск FastAPI в dev-режиме
-dev:
-	@echo "$(GREEN)🚀 Запуск сервера разработки...$(NC)"
-	uvicorn app.main:app --host localhost --port 8000 --reload
+# Сборка Docker-образов
+build:
+	@echo "$(GREEN)🔧 Сборка образов...$(NC)"
+	docker compose -f $(COMPOSE_FILE) build
 
-# Создание новой миграции
-migration:
-ifndef message
-	$(error ❌ Укажите сообщение: make migration message="Initial commit")
-endif
-	alembic revision --autogenerate -m "$(message)"
+# Запуск контейнеров
+up:
+	@echo "$(GREEN)🚀 Запуск контейнеров...$(NC)"
+	docker compose -f $(COMPOSE_FILE) up -d
 
-# Применение миграций локально
-migrate-local:
-	alembic upgrade head
+# Остановка контейнеров
+down:
+	@echo "$(RED)⛔ Остановка контейнеров...$(NC)"
+	docker compose -f $(COMPOSE_FILE) down
 
-# Очистка pycache и docker-мусора
+# Создание таблиц
+init-db:
+	@echo "$(GREEN)📦 Создание таблицы внутри контейнера...$(NC)"
+	docker compose -f $(COMPOSE_FILE) exec $(APP_SERVICE) python3 scripts/init_db.py
+
+# Выполнение миграций
+migrate:
+	@echo "$(GREEN)📦 Применение миграций внутри контейнера...$(NC)"
+	docker compose -f $(COMPOSE_FILE) exec $(APP_SERVICE) alembic upgrade head
+
+# Подключение к bash
+shell:
+	@echo "$(GREEN)💻 Подключение к контейнеру...$(NC)"
+	docker compose -f $(COMPOSE_FILE) exec $(APP_SERVICE) /bin/bash
+
+# Очистка Docker и Python кэша
 clean:
-	@echo "$(RED)🧹 Очистка кеша и Docker...$(NC)"
+	@echo "$(RED)🧹 Полная очистка...$(NC)"
+	docker-compose -f $(COMPOSE_FILE) down --remove-orphans
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
-	$(MAKE) docker-clean
-
-# Быстрая инициализация проекта
-init: docker-build docker-up docker-migrate docker-create-superuser
-	@echo "$(GREEN)✅ Проект $(PROJECT_NAME) инициализирован$(NC)"
-
-# Справка
-help:
-	@echo "$(GREEN)Makefile для проекта: $(PROJECT_NAME)$(NC)"
-	@echo ""
-	@echo "$(YELLOW)Основные команды (локальные):$(NC)"
-	@echo "  $(GREEN)make dev$(NC)            - Запуск FastAPI в dev-режиме"
-	@echo "  $(GREEN)make migration$(NC)      - Создать миграцию (требует message=\"...\")"
-	@echo "  $(GREEN)make migrate-local$(NC)  - Применить миграции локально"
-	@echo "  $(GREEN)make clean$(NC)          - Очистка кэша и Docker-контейнеров"
-	@echo "  $(GREEN)make init$(NC)           - Быстрая инициализация проекта"
-	@echo ""
-	@echo "$(YELLOW)Docker команды:$(NC)"
-	@$(MAKE) docker-help

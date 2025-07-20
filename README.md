@@ -184,15 +184,6 @@ CORS_ORIGINS=["http://localhost:8000","http://127.0.0.1:8000"]
 - **ReDoc:** http://localhost:8000/redoc
 - **Админка:** http://localhost:8000/admin
 
-### Создание суперпользователя
-```bash
-# Docker
-   make docker-create-superuser
-
-   # Локально
-   python scripts/create_superuser.py
-```
-
 ## 📚 API Документация
 
 ### Аутентификация

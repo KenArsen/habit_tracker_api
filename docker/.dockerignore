@@ -74,7 +74,7 @@ docs/_build/
 # Docker
 docker/
 Dockerfile
-docker-compose.yaml
+old-docker-compose.yaml
 docker-compose.yml
 .dockerignore
 Makefile

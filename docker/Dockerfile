@@ -1,5 +1,5 @@
 # Этап 1: Сборка зависимостей с Poetry
-FROM python:3.11-slim AS builder
+FROM python:3.12-slim AS builder
 
 # Устанавливаем переменные окружения
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -22,7 +22,7 @@ RUN poetry config virtualenvs.create false \
 COPY . /app
 
 # Этап 2: Runtime-образ
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Устанавливаем переменные окружения
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Копируем зависимости и проект из builder
-COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
+COPY --from=builder /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
 COPY --from=builder /app /app
 
@@ -46,4 +46,4 @@ COPY --from=builder /app /app
 EXPOSE 8000
 
 # Указываем команду по умолчанию (будет переопределена в docker-compose)
-CMD ["sh", "-c", " uvicorn app.main:app --host localhost --port 8000 --reload"]
+CMD ["sh", "-c", " uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
