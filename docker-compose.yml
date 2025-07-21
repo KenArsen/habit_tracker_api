@@ -10,6 +10,13 @@ services:
       - postgres_db
     env_file:
       - .env
+    develop:
+      watch:
+        - action: sync+restart
+          path: .
+          target: /habit_tracker_api
+        - action: rebuild
+          path: poetry.lock
 
   postgres_db:
     image: postgres:16.3-alpine
@@ -19,8 +26,6 @@ services:
       - POSTGRES_DB=${DB_NAME}
     env_file:
       - .env
-    ports:
-      - "5431:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
