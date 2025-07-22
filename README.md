@@ -223,7 +223,6 @@ CORS_ORIGINS=["http://localhost:8000","http://127.0.0.1:8000"]
     make build              # Сборка Docker-образов
     make up                 # Запуск контейнеров в фоне
     make down               # Остановка и удаление контейнеров
-    make init-db            # Создание таблиц внутри контейнера
     make shell              # Подключение к Bash внутри контейнера
     make clean              # Очистка Docker + Python кэша
     make watch              # Автоперезапуск при изменениях (docker compose watch)
